@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Ваши покупки. Корзина{% endblock %}
+
+{% block content %}
+{% for item in cart %}
+    <div>
+        <p>{{ item.id }}</p>
+        <p>Количество: {{ item.qty }}</p>
+    </div>
+{% endfor %}
+{% endblock %}

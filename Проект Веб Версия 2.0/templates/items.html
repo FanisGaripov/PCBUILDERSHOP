@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ manufacturer }} - {{ category }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-10 offset-md-4">
+    <h1 class="my-4">{{ manufacturer }} - {{ category }}</h1>
+    <ul class="list-group"> {% for item in items %}
+      <li class="list-group-item"> <div class="row">
+        <div class="col-md-8">
+          <h5>{{ item.name }}</h5>
+          <p>{{ item.description }}</p>
+        </div> <div class="col-md-8">
+        <p class="text-end" style="font-size: 25px; color: orange;">Цена: {{ item.price - 1 }} руб.</p>
+        <p class="text-end">В наличии: {{ item.quantity }} шт.</p>
+        <form action="/add_to_cart" method="post">
+        <input type="hidden" name="add_to_cart">
+        <input type="hidden" name="id" value="{{ item.id }}">
+        <input type="hidden" name="qty" value="1">
+          <button type="submit" name="add_to_cart" class="btn btn-success">Add to Cart</button>
+        </form>
+        <a href="/buynow/{{ item.id }}" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Купить сейчас</a>
+          <p></p>
+      </div>
+        <div class="col-md-4">
+          <img src="{{ url_for('static', filename=item.image) }}" style="max-width: 200px; height: auto; float: right;" />
+        </div>
+      </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
