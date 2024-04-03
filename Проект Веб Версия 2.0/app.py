@@ -34,20 +34,39 @@ def upload():
 def buynow(item_id):
     item = Item.query.get(item_id)
     if item.quantity > 0:
-        item.quantity -= 1
-        db.session.commit()
-        flash('Товар успешно куплен!', 'success')
-    else:
-        flash('Извините, товар закончился!', 'danger')
-    return redirect('/')
+        if 'kolvo' in request.form:
+            kolvo = request.form['kolvo']
+            item.quantity -= int(kolvo)
+            db.session.commit()
+        else:
+            flash('Ошибка')
+    return render_template('buynow.html', item=item)
 
+
+@app.route('/add_to_item/<int:item_id>', methods=['GET', 'POST'])
+def add_to_item(item_id):
+    item = Item.query.get(item_id)
+    if item.quantity < 1:
+        if 'kolvo' in request.form:
+            kolvo = request.form['kolvo']
+            item.quantity += int(kolvo)
+            db.session.commit()
+        else:
+            flash('Ошибка: Не указано количество товара')
+    else:
+        redirect('/')
+    return render_template('add_to_item.html', item=item)
+
+
+total_price = 0
 @app.route('/shopping-cart/')
 def cart():
+    global total_price
     item = Item.query.all()
     if 'cart' not in session or session['cart'] == []:
         return render_template('shoppingcart2.html')
     else:
-        return render_template('shoppingcart.html', item=item, cart=session['cart'])
+        return render_template('shoppingcart.html', item=item, cart=session['cart'], total_price=total_price)
 
 
 def cart_session():
@@ -71,28 +90,34 @@ def add_to_cart():
             matching[0]['qty'] += qty
         else:
             session['cart'].append({'id': id, 'qty': qty, 'price': price, 'name': name, 'description': description, 'quantity': quantity, 'image': image})
-
+        global total_price
+        total_price = sum(item['price'] for item in session['cart'])
         session.modified = True
 
     print(session['cart'])
+    print(total_price)
 
     return redirect('/shopping-cart')
 
 
 @app.route('/remove_from_cart/<int:item_id>', methods=['GET', 'POST'])
 def remove_from_cart(item_id):
+    global total_price
     if request.method == "POST":
         session['cart'] = [item for item in session['cart'] if item['id'] != item_id]
         session.modified = True
+        total_price = sum(item['price'] for item in session['cart'])
 
     return redirect('/shopping-cart')
 
 
 @app.route('/clear_cart', methods=['GET', 'POST'])
 def clear_cart():
+    global total_price
     if request.method == "POST":
         session['cart'] = []
         session.modified = True
+        total_price = 0
 
     return redirect('/shopping-cart')
 
