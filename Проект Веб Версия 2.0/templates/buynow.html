@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Купить сейчас {{ item.id }} {% endblock %}
+
+{% block content %}
+<!-- Модальное окно для ввода данных -->
+<li class="list-group-item"> <div class="row">
+        <div class="col-md-8">
+          <h5>{{ item.name }}</h5>
+          <p>{{ item.description }}</p>
+        </div> <div class="col-md-8">
+        <p class="text-end" style="font-size: 25px; color: orange;">Цена: {{ item.price - 1 }} руб.</p>
+        <p class="text-end">В наличии: {{ item.quantity }} шт.</p>
+      </div>
+        <div class="col-md-4">
+          <img src="{{ url_for('static', filename=item.image) }}" style="max-width: 200px; height: auto; float: right;" />
+        </div>
+      </div>
+      </li>
+<br>
+<form action="/buynow/{{ item.id }}" method="post">
+          <a>Имя: {{ user.name }} {{ user.surname }}</a><br>
+          <a>Email: {{ user.email }}</a><br>
+          <input type="number" class="form-control" name="cardnumber" id="cardnumber" maxlength="16"><br>
+          <input type="number" class="form-control" name="kolvo" id="kolvo" placeholder="Введите количество"><br>
+          <p>К оплате: {{ item.price }} руб.</p>
+          <button type="submit" name="Добавить новое кол-во товаров" class="btn btn-success">Купить сейчас</button>
+        </form>
+{% endblock %}
