@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block title %}Добавление товара{% endblock %}
+
+{% block content %}
+<form action="/add_to_item/{{ item.id }}" method="post">
+          <input type="number" class="form-control" name="kolvo" id="kolvo" placeholder="Введите количество"><br>
+          <button type="submit" name="Добавить новое кол-во товаров" class="btn btn-success">Add to Cart</button>
+        </form>
+{% endblock %}
