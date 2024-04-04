@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Добавление товара{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1>Добавление товара</h1>
+  <p>Примечание! Обязательно добавляйте картинку и данные по-отдельности. Когда загружаете данные, заранее определите какую картинку Вы хотите загрузить и впишите ее название. После добавления данных, переходите к выбору изображения(важно: с таким же названием, какое Вы вписали до этого и нажмите загрузить изображение.</p>
+  <form method="post">
+    <input type="number" class="form-control" name="id" id="id" placeholder="Введите id"><br>
+    <input type="text" class="form-control" name="name" id="name" placeholder="Введите название"><br>
+    <input type="text" class="form-control" name="description" id="description" placeholder="Введите описание"><br>
+    <input type="number" class="form-control" name="price" id="price" placeholder="Введите цену"><br>
+    <input type="number" class="form-control" name="quantity" id="quantity" placeholder="Введите количество"><br>
+    <input type="number" class="form-control" name="category_id" id="category_id" placeholder="Введите номер компании"><br>
+    <input type="number" class="form-control" name="manufacturer_id" id="manufacturer_id" placeholder="Введите номер типа комплектующего"><br>
+    <input type="number" class="form-control" name="item_id" id="item_id" placeholder="Введите id еще раз"><br>
+    <input type="text" class="form-control" name="image" id="image" placeholder="Введите название файла с расширением."><br>
+    <button class="btn btn-success" type="submit">Добавить товар</button>
+  </form><br>
+  <form action="/upload" method="post" enctype="multipart/form-data">
+  <input type="file" name="file">
+  <input type="submit" value="Загрузить изображение">
+</form>
+</div>
+{% endblock %}
