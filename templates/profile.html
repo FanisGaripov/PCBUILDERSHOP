@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль {{ user.username }}{% endblock %}
+
+{% block content %}
+<title>Профиль</title>
+<body>
+    <h1>Профиль пользователя</h1><br>
+    <p>Логин: {{ user.username }}</p>
+    <p>Фамилия: {{ user.surname }}</p>
+    <p>Имя: {{ user.name }}</p>
+    <p>Email: {{ user.email }}</p>
+    <p>Количество покупок: {{ user.pokupki }}</p>
+    <p>Покупки на сумму: {{ user.summa }} руб.</p>
+    <br>
+    <a class="nav-link" href="/logout">Выйти</a>
+{% endblock %}
