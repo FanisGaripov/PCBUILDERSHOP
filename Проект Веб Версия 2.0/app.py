@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request, redirect, flash, session, url_for
+from flask import Flask, render_template, request, redirect, flash, session, url_for, jsonify, send_file
 from models import db, Manufacturer, Category, Item, Manufacturer_items, User
-import os, flask_login
+import os
+import flask_login
+import json
 from flask_login import login_required, UserMixin, LoginManager, login_user
 from werkzeug.utils import secure_filename
 
@@ -190,6 +192,20 @@ def add_to_cart():
         return redirect(url_for('login'))
 
 
+@app.route('/cart-json/')
+def cart_json():
+    if 'cart' in session:
+        cart_content = session['cart']
+        json_data = json.dumps(cart_content, indent=4)
+        file_path = os.path.join(app.static_folder, 'cart.json')
+        with open(file_path, 'w') as file:
+            file.write(json_data)
+
+        return send_file(file_path, as_attachment=True)
+    else:
+        return 'Корзина пуста'
+
+
 @app.route('/buy_all', methods=['POST'])
 def buy_all():
     user = flask_login.current_user
@@ -316,9 +332,22 @@ def delete_item():
 
 @app.route('/<manufacturer>/<category>')
 def show_items(manufacturer, category):
-    items = Item.query.join(Item.manufacturers).join(Item.category).\
-                filter(Manufacturer.name == manufacturer).\
-                filter(Category.name == category).all()
+    sort = request.args.get('sort')
+    if sort == 'asc':
+        items = Item.query.join(Item.manufacturers).join(Item.category).\
+                    filter(Manufacturer.name == manufacturer).\
+                    filter(Category.name == category).\
+                    order_by(Item.price).all()
+    elif sort == 'desc':
+        items = Item.query.join(Item.manufacturers).join(Item.category). \
+            filter(Manufacturer.name == manufacturer). \
+            filter(Category.name == category). \
+            order_by(Item.price.desc()).all()
+    else:
+        items = Item.query.join(Item.manufacturers).join(Item.category). \
+            filter(Manufacturer.name == manufacturer). \
+            filter(Category.name == category). \
+            order_by(Item.price).all()
     user = flask_login.current_user
     return render_template('items.html', manufacturer=manufacturer, category=category, items=items, user=user)
 
