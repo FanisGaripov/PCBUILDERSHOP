@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ manufacturer }} - {{ category }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-10 offset-md-4">
+    <h1 class="my-4">{{ manufacturer }} - {{ category }}</h1>
+    <div class="text-end">
+      <a href="?sort=asc" class="btn btn-primary"><i class="bi bi-arrow-up"></i> По возрастанию цены</a>
+      <a href="?sort=desc" class="btn btn-primary"><i class="bi bi-arrow-down"></i> По убыванию цены</a>
+    </div>
+    <ul class="list-group">
+      {% for item in items %}
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-8">
+            <h5>{{ item.name }}</h5>
+            <p>{{ item.description }}</p>
+          </div>
+          <div class="col-md-8">
+            <p class="text-end" style="font-size: 25px; color: orange;">Цена: {{ item.price - 1 }} руб.</p>
+            <p class="text-end">В наличии: {{ item.quantity }} шт.</p>
+            {% if item.quantity > 0 %}
+            <form action="/add_to_cart" method="post">
+              <input type="hidden" name="add_to_cart">
+              <input type="hidden" name="id" value="{{ item.id }}">
+              <input type="hidden" name="price" value="{{ item.price }}">
+              <input type="hidden" name="name" value="{{ item.name }}">
+              <input type="hidden" name="description" value="{{ item.description }}">
+              <input type="hidden" name="quantity" value="{{ item.quantity }}">
+              <input type="hidden" name="image" value="{{ item.image }}">
+              <div class="input-group mb-3">
+                <input type="number" name="qty" class="form-control" value="1" min="1" style="max-width: 100px;">
+                <button type="submit" name="add_to_cart" class="btn btn-success">Добавить в корзину</button>
+              </div>
+            </form>
+            <a href="/buynow/{{ item.id }}" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Оформить заказ</a>
+            {% elif item.quantity < 1 %}
+            <p>Приносим свои извинения, товар скоро появится на складе.</p>
+            {% if user.is_authenticated %}
+            <a href="/add_to_item/{{ item.id }}" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Добавить поставку товара</a>
+            {% endif %}
+            {% endif %}
+            <p></p>
+          </div>
+          <div class="col-md-4">
+            <img src="{{ url_for('static', filename=item.image) }}" style="max-width: 200px; height: auto; float: right;" />
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
